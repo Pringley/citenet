@@ -4,8 +4,8 @@ import util
 def neighborrank(graph, n=100, neighborhood_depth=2):
     """Compute the NeighborRank of the top n nodes in graph, using the
     specified neighborhood_depth."""
-    # Get top n nodes with highest indegree (most often cited).
-    nodes = util.top_n_from_dict(graph.in_degree(), n=n)
+    # Get top n nodes with highest outdegree (most often cited).
+    nodes = util.top_n_from_dict(graph.out_degree(), n=n)
 
     # Find neighborhood sizes.
     nhood_sizes = {}
@@ -16,7 +16,7 @@ def neighborrank(graph, n=100, neighborhood_depth=2):
         for i in range(neighborhood_depth):
             prev_nhood = nhood.copy()
             for node in prev_nhood:
-                nhood |= set(graph.successors(node))
+                nhood |= set(graph.predecessors(node))
         # Update the results dict.
         nhood_sizes[root] = len(nhood)
 
