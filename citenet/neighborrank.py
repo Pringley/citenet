@@ -1,5 +1,5 @@
 import networkx as nx
-import util
+from citenet import util
 
 def neighborrank(graph, n=100, neighborhood_depth=2):
     """Compute the NeighborRank of the top n nodes in graph, using the
