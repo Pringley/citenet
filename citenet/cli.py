@@ -12,4 +12,5 @@ def main():
     with open(sys.argv[1]) as config_file:
         config = json.load(config_file)
 
-    graph = citenet.read_csv_graph(**config['graph'])
+    graph = citenet.read_csv_graph_and_metadata(config['graph'],
+                                                config['metadata'])

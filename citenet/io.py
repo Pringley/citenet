@@ -4,11 +4,30 @@ import csv
 import logging
 from networkx import DiGraph
 
+def read_csv_graph_and_metadata(graph_cfg, metadata_cfg):
+    """Read a graph with metadata."""
+
+    logger = logging.getLogger(__name__)
+
+    graph = read_csv_graph(**graph_cfg)
+
+    metadata = read_csv_metadata(**metadata_cfg)
+    for node, fields in metadata.items():
+        for key, val in fields.items():
+            try:
+                graph[node][key] = val
+            except KeyError:
+                if not metadata_cfg.get('suppress_warnings', False):
+                    logger.warn('Metadata node {} not found'.format(node))
+
+    return graph
+
 def read_csv_graph(filename,
                    delimiter=',',
+                   encoding=None,
                    reverse_edges=False,
                    suppress_warnings=False,
-                   ignore_header=False):
+                   ignore_header=True):
     """Read an edgelist style graph from a CSV file.
 
     Options:
@@ -22,7 +41,7 @@ def read_csv_graph(filename,
     logger = logging.getLogger(__name__)
 
     edgeset = set()
-    with open(filename, newline='') as file_obj:
+    with open(filename, encoding=encoding, newline='') as file_obj:
         reader = csv.reader(file_obj, delimiter=delimiter)
 
         # Skip header line (if specified).
@@ -54,3 +73,31 @@ def read_csv_graph(filename,
     graph.add_edges_from(edgeset)
 
     return graph
+
+def read_csv_metadata(filename,
+                      delimiter=',',
+                      encoding=None,
+                      suppress_warnings=False,
+                      id_field='id'):
+    """Read metadata from a CSV file.
+
+    Options:
+        filename -- path to the csv file
+        delimiter -- CSV delimiter (e.g. ',', '\\t')
+        suppress_warnings -- flag to ignore "bad line" warnings
+        id_field -- name of field identifying the node
+
+    """
+    metadata = {}
+    with open(filename, encoding=encoding, newline='') as file_obj:
+        reader = csv.reader(file_obj, delimiter=delimiter)
+
+        header = next(reader)
+
+        for row in reader:
+            fields = dict(zip(header, row))
+            key = fields[id_field]
+            del fields[id_field]
+            metadata[key] = fields
+
+    return metadata
