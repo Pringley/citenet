@@ -6,6 +6,7 @@ setup(
     name = "CiteNet",
     version = "0.0.1",
     packages = find_packages(),
+    scripts = ['scripts/citenet'],
     
     install_requires = """
       networkx>=1.8.1
