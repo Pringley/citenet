@@ -1,3 +1,7 @@
-def top_n_from_dict(d, n):
-    """Get the top n keys from dictionary d, sorted by value."""
-    return sorted(d, key=d.__getitem__, reverse=True)[:n]
+"""Utility functions for citenet."""
+
+def top_n_from_dict(dictionary, amount):
+    """Get the top ``amount`` keys from ``dictionary``, sorted by value."""
+    return sorted(dictionary,
+                  key=dictionary.__getitem__,
+                  reverse=True)[:amount]

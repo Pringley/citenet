@@ -1,26 +1,27 @@
+"""Utilities for reading and writing citation graphs."""
+
 import gzip
-import json
 from networkx.readwrite import json_graph
 
 def write_json_graph(graph, filename, compressed=True):
     """Write a graph to file."""
     if compressed:
-        fp = gzip.open(filename, 'wb')
+        file_obj = gzip.open(filename, 'wb')
     else:
-        fp = open(filename, 'w')
+        file_obj = open(filename, 'w')
     try:
-        json_graph.dump(graph, fp)
+        json_graph.dump(graph, file_obj)
     finally:
-        fp.close()
+        file_obj.close()
 
 def read_json_graph(filename, compressed=True):
     """Read a graph from file."""
     if compressed:
-        fp = gzip.open(filename, 'rb')
+        file_obj = gzip.open(filename, 'rb')
     else:
-        fp = open(filename)
+        file_obj = open(filename)
     try:
-        graph = json_graph.load(fp)
+        graph = json_graph.load(file_obj)
     finally:
-        fp.close()
+        file_obj.close()
     return graph
