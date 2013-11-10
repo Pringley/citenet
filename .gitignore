@@ -1,6 +1,7 @@
 # Python
 *.pyc
 *.egg-info
+__pycache__
 
 # Editor
 *.swp
