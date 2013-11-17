@@ -4,21 +4,22 @@ import csv
 import logging
 from networkx import DiGraph
 
-def read_csv_graph_and_metadata(graph_cfg, metadata_cfg):
+def read_csv_graph_and_metadata(graph_cfg, metadata_cfgs):
     """Read a graph with metadata."""
 
     logger = logging.getLogger(__name__)
 
     graph = read_csv_graph(**graph_cfg)
 
-    metadata = read_csv_metadata(**metadata_cfg)
-    for node, fields in metadata.items():
-        for key, val in fields.items():
-            try:
-                graph[node][key] = val
-            except KeyError:
-                if not metadata_cfg.get('suppress_warnings', False):
-                    logger.warn('Metadata node {} not found'.format(node))
+    for metadata_cfg in metadata_cfgs:
+        metadata = read_csv_metadata(**metadata_cfg)
+        for node, fields in metadata.items():
+            for key, val in fields.items():
+                try:
+                    graph[node][key] = val
+                except KeyError:
+                    if not metadata_cfg.get('suppress_warnings', False):
+                        logger.warn('Metadata node {} not found'.format(node))
 
     return graph
 
