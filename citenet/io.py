@@ -15,7 +15,7 @@ def read_csv_graph_and_metadata(graph_cfg, metadata_cfgs):
         for node, fields in metadata.items():
             for key, val in fields.items():
                 try:
-                    graph[node][key] = val
+                    graph.node[node][key] = val
                 except KeyError:
                     if not metadata_cfg.get('suppress_warnings', False):
                         logger.warn('Metadata node {} not found'.format(node))

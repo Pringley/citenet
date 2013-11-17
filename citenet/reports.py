@@ -5,8 +5,8 @@ from citenet.util import sort_rows
 from math import floor
 
 def metadata_histogram(graph, field):
-    counts = Counter((graph[node][field]
-                      if field in graph[node]
+    counts = Counter((graph.node[node][field]
+                      if field in graph.node[node]
                       else None)
                      for node in graph.nodes())
     header = (field, 'count')
@@ -14,10 +14,11 @@ def metadata_histogram(graph, field):
     return header, rows
 
 def normalized_outdegree_by_metadata(graph, field):
-    histogram = Counter(graph[node].get(field, None) for node in graph.nodes())
+    histogram = Counter(graph.node[node].get(field, None)
+                        for node in graph.nodes())
     counts = defaultdict(int)
     for node in graph.nodes():
-        key = graph[node].get(field, None)
+        key = graph.node[node].get(field, None)
         counts[key] += len(graph.successors(node))
 
     rows = sort_rows((field, degree / histogram[field], degree, histogram[field])
@@ -26,14 +27,15 @@ def normalized_outdegree_by_metadata(graph, field):
     return header, rows
 
 def good_outdegree_ratio_by_metadata(graph, field, ratio_cutoff):
-    histogram = Counter(graph[node].get(field, None) for node in graph.nodes())
+    histogram = Counter(graph.node[node].get(field, None)
+                        for node in graph.nodes())
     all_outdegrees = sorted((len(graph.successors(node))
                              for node in graph.nodes()),
                             reverse=True)
     cutoff = all_outdegrees[floor(len(all_outdegrees)*ratio_cutoff)]
     counts = {key: 0 for key in histogram.keys()}
     for node in graph.nodes():
-        key = graph[node].get(field, None)
+        key = graph.node[node].get(field, None)
         if len(graph.successors(node)) >= cutoff:
             counts[key] += 1
     rows = sort_rows(((field, count / histogram[field], histogram[field], count)
