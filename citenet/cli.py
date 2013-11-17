@@ -2,6 +2,7 @@
 
 import sys
 import json
+import code
 import os.path
 import logging
 import citenet
@@ -25,9 +26,12 @@ def main():
         if not arg.startswith('-')
     ]
 
-    if len(positional_args) != 1:
-        print("Usage: {} [options] <config_file>")
-    config_filename = positional_args[0]
+    if len(positional_args) != 2:
+        print("Usage: {} [options] reports <config_file>")
+        print("       {} [options] interact <config_file>")
+
+    command = positional_args[0]
+    config_filename = positional_args[1]
 
     logging.basicConfig(level=logging.INFO,
                         format=LOGGING_FORMAT)
@@ -37,7 +41,21 @@ def main():
 
     graph = citenet.read_csv_graph_and_metadata(config['graph'],
                                                 config['metadata'])
+    if command == 'reports':
+        generate_reports(graph, config)
+    elif command == 'interact':
+        code.interact(
+            local={
+                'graph': graph,
+                'config': config,
+                'logger': logger
+            },
+            banner="Welcome to CiteNet! Your data is loaded in ``graph``."
+        )
 
+def generate_reports(graph, config):
+    """Generate reports specified in config."""
+    logger = logging.getLogger(__name__)
     for report_config in config['reports']:
         if (config['options']['cache_reports']
                 and os.path.exists(report_config['output'])):
