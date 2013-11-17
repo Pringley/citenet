@@ -6,7 +6,6 @@ from networkx import DiGraph
 
 def read_csv_graph_and_metadata(graph_cfg, metadata_cfgs):
     """Read a graph with metadata."""
-
     logger = logging.getLogger(__name__)
 
     graph = read_csv_graph(**graph_cfg)
@@ -73,6 +72,8 @@ def read_csv_graph(filename,
     graph = DiGraph()
     graph.add_edges_from(edgeset)
 
+    logger.info('Loaded graph from {}'.format(filename))
+
     return graph
 
 def read_csv_metadata(filename,
@@ -89,6 +90,8 @@ def read_csv_metadata(filename,
         id_field -- name of field identifying the node
 
     """
+    logger = logging.getLogger(__name__)
+
     metadata = {}
     with open(filename, encoding=encoding, newline='') as file_obj:
         reader = csv.reader(file_obj, delimiter=delimiter)
@@ -100,5 +103,7 @@ def read_csv_metadata(filename,
             key = fields[id_field]
             del fields[id_field]
             metadata[key] = fields
+
+    logger.info('Loaded metadata from {}'.format(filename))
 
     return metadata
